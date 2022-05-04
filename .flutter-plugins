@@ -1,0 +1,7 @@
+# This is a generated file; do not edit or check into version control.
+firebase_auth=/opt/homebrew/Caskroom/flutter/2.10.4/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth-3.3.13/
+firebase_auth_web=/opt/homebrew/Caskroom/flutter/2.10.4/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth_web-3.3.11/
+firebase_core=/opt/homebrew/Caskroom/flutter/2.10.4/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-1.14.0/
+firebase_core_web=/opt/homebrew/Caskroom/flutter/2.10.4/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.6.1/
+google_sign_in=/opt/homebrew/Caskroom/flutter/2.10.4/flutter/.pub-cache/hosted/pub.dartlang.org/google_sign_in-5.2.4/
+google_sign_in_web=/opt/homebrew/Caskroom/flutter/2.10.4/flutter/.pub-cache/hosted/pub.dartlang.org/google_sign_in_web-0.10.0+5/
