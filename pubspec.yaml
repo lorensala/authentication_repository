@@ -4,12 +4,14 @@ version: 1.0.0
 publish_to: none
 
 environment:
-  sdk: '>=2.16.2 <3.0.0'
-  flutter: '>=1.17.0'
+  sdk: ">=2.16.2 <3.0.0"
+  flutter: ">=1.17.0"
 
 dependencies:
   cache:
-    path: ../cache
+    git:
+      url: "https://github.com/lorensala/cache.git"
+      ref: master
   equatable: ^2.0.3
   firebase_auth: ^3.3.13
   firebase_core: ^1.14.0
