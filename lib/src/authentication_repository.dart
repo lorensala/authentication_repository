@@ -66,7 +66,7 @@ class SignUpWithEmailAndPasswordFailure implements Exception {
             );
           case 'operation-not-allowed':
             return const SignUpWithEmailAndPasswordFailure(
-              'Operación no permitida. Porfavor, contáctese con soporte.',
+              'Operación no permitida. Por favor, contáctese con soporte.',
             );
           case 'weak-password':
             return const SignUpWithEmailAndPasswordFailure(
@@ -130,11 +130,11 @@ class LogInWithEmailAndPasswordFailure implements Exception {
             );
           case 'user-not-found':
             return const LogInWithEmailAndPasswordFailure(
-              'El email no esta registrado. Porfavor, creese una cuenta.',
+              'El email no esta registrado. Por favor, creese una cuenta.',
             );
           case 'wrong-password':
             return const LogInWithEmailAndPasswordFailure(
-              'El email o la contraseña son incorrectos. Porfavor, intente nuevamente.',
+              'El email o la contraseña son incorrectos. Por favor, intente nuevamente.',
             );
           default:
             return const LogInWithEmailAndPasswordFailure();
