@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
+enum LanguageCode { en, es }
+
 /// {@template sign_up_with_email_and_password_failure}
 /// Thrown if during the sign up process if a failure occurs.
 /// {@endtemplate}
@@ -20,30 +22,59 @@ class SignUpWithEmailAndPasswordFailure implements Exception {
   /// Create an authentication message
   /// from a firebase authentication exception code.
   /// https://pub.dev/documentation/firebase_auth/latest/firebase_auth/FirebaseAuth/createUserWithEmailAndPassword.html
-  factory SignUpWithEmailAndPasswordFailure.fromCode(String code) {
-    switch (code) {
-      case 'invalid-email':
-        return const SignUpWithEmailAndPasswordFailure(
-          'Email is not valid or badly formatted.',
-        );
-      case 'user-disabled':
-        return const SignUpWithEmailAndPasswordFailure(
-          'This user has been disabled. Please contact support for help.',
-        );
-      case 'email-already-in-use':
-        return const SignUpWithEmailAndPasswordFailure(
-          'An account already exists for that email.',
-        );
-      case 'operation-not-allowed':
-        return const SignUpWithEmailAndPasswordFailure(
-          'Operation is not allowed.  Please contact support.',
-        );
-      case 'weak-password':
-        return const SignUpWithEmailAndPasswordFailure(
-          'Please enter a stronger password.',
-        );
-      default:
-        return const SignUpWithEmailAndPasswordFailure();
+  factory SignUpWithEmailAndPasswordFailure.fromCode(
+      String code, LanguageCode languageCode) {
+    switch (languageCode) {
+      case LanguageCode.en:
+        switch (code) {
+          case 'invalid-email':
+            return const SignUpWithEmailAndPasswordFailure(
+              'Email is not valid or badly formatted.',
+            );
+          case 'user-disabled':
+            return const SignUpWithEmailAndPasswordFailure(
+              'This user has been disabled. Please contact support for help.',
+            );
+          case 'email-already-in-use':
+            return const SignUpWithEmailAndPasswordFailure(
+              'An account already exists for that email.',
+            );
+          case 'operation-not-allowed':
+            return const SignUpWithEmailAndPasswordFailure(
+              'Operation is not allowed.  Please contact support.',
+            );
+          case 'weak-password':
+            return const SignUpWithEmailAndPasswordFailure(
+              'Please enter a stronger password.',
+            );
+          default:
+            return const SignUpWithEmailAndPasswordFailure();
+        }
+      case LanguageCode.es:
+        switch (code) {
+          case 'invalid-email':
+            return const SignUpWithEmailAndPasswordFailure(
+              'El email no es válido o tiene un formato incorrecto.',
+            );
+          case 'user-disabled':
+            return const SignUpWithEmailAndPasswordFailure(
+              'El usuario ha sido deshabilitado. Contáctese con soporte.',
+            );
+          case 'email-already-in-use':
+            return const SignUpWithEmailAndPasswordFailure(
+              'El email ya tiene asociado una cuenta.',
+            );
+          case 'operation-not-allowed':
+            return const SignUpWithEmailAndPasswordFailure(
+              'Operación no permitida. Porfavor, contáctese con soporte.',
+            );
+          case 'weak-password':
+            return const SignUpWithEmailAndPasswordFailure(
+              'Por favor, ingrese una contraseña más fuerte.',
+            );
+          default:
+            return const SignUpWithEmailAndPasswordFailure();
+        }
     }
   }
 
@@ -63,26 +94,51 @@ class LogInWithEmailAndPasswordFailure implements Exception {
 
   /// Create an authentication message
   /// from a firebase authentication exception code.
-  factory LogInWithEmailAndPasswordFailure.fromCode(String code) {
-    switch (code) {
-      case 'invalid-email':
-        return const LogInWithEmailAndPasswordFailure(
-          'Email is not valid or badly formatted.',
-        );
-      case 'user-disabled':
-        return const LogInWithEmailAndPasswordFailure(
-          'This user has been disabled. Please contact support for help.',
-        );
-      case 'user-not-found':
-        return const LogInWithEmailAndPasswordFailure(
-          'Email is not found, please create an account.',
-        );
-      case 'wrong-password':
-        return const LogInWithEmailAndPasswordFailure(
-          'Incorrect password, please try again.',
-        );
-      default:
-        return const LogInWithEmailAndPasswordFailure();
+  factory LogInWithEmailAndPasswordFailure.fromCode(
+      String code, LanguageCode languageCode) {
+    switch (languageCode) {
+      case LanguageCode.en:
+        switch (code) {
+          case 'invalid-email':
+            return const LogInWithEmailAndPasswordFailure(
+              'Email is not valid or badly formatted.',
+            );
+          case 'user-disabled':
+            return const LogInWithEmailAndPasswordFailure(
+              'This user has been disabled. Please contact support for help.',
+            );
+          case 'user-not-found':
+            return const LogInWithEmailAndPasswordFailure(
+              'Email is not found, please create an account.',
+            );
+          case 'wrong-password':
+            return const LogInWithEmailAndPasswordFailure(
+              'Incorrect email or password, please try again.',
+            );
+          default:
+            return const LogInWithEmailAndPasswordFailure();
+        }
+      case LanguageCode.es:
+        switch (code) {
+          case 'invalid-email':
+            return const LogInWithEmailAndPasswordFailure(
+              'El email no es válido o tiene un formato incorrecto.',
+            );
+          case 'user-disabled':
+            return const LogInWithEmailAndPasswordFailure(
+              'El usuario ha sido deshabilitado. Contáctese con soporte.',
+            );
+          case 'user-not-found':
+            return const LogInWithEmailAndPasswordFailure(
+              'El email no esta registrado. Porfavor, creese una cuenta.',
+            );
+          case 'wrong-password':
+            return const LogInWithEmailAndPasswordFailure(
+              'El email o la contraseña son incorrectos. Porfavor, intente nuevamente.',
+            );
+          default:
+            return const LogInWithEmailAndPasswordFailure();
+        }
     }
   }
 
@@ -157,13 +213,16 @@ class AuthenticationRepository {
     CacheClient? cache,
     firebase_auth.FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
+    LanguageCode? languageCode,
   })  : _cache = cache ?? CacheClient(),
         _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn.standard();
+        _googleSignIn = googleSignIn ?? GoogleSignIn.standard(),
+        _languageCode = languageCode ?? LanguageCode.en;
 
   final CacheClient _cache;
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
+  final LanguageCode _languageCode;
 
   /// Whether or not the current environment is web
   /// Should only be overriden for testing purposes. Otherwise,
@@ -209,7 +268,7 @@ class AuthenticationRepository {
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      throw SignUpWithEmailAndPasswordFailure.fromCode(e.code);
+      throw SignUpWithEmailAndPasswordFailure.fromCode(e.code, _languageCode);
     } catch (_) {
       throw const SignUpWithEmailAndPasswordFailure();
     }
@@ -257,7 +316,7 @@ class AuthenticationRepository {
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      throw LogInWithEmailAndPasswordFailure.fromCode(e.code);
+      throw LogInWithEmailAndPasswordFailure.fromCode(e.code, _languageCode);
     } catch (_) {
       throw const LogInWithEmailAndPasswordFailure();
     }
