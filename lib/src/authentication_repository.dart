@@ -137,7 +137,7 @@ class LogInWithEmailAndPasswordFailure implements Exception {
               'El email o la contraseña son incorrectos. Por favor, intente nuevamente.',
             );
           default:
-            return const LogInWithEmailAndPasswordFailure();
+            return const LogInWithEmailAndPasswordFailure('Error desconocido.');
         }
     }
   }
@@ -242,7 +242,7 @@ class LogInWithGoogleFailure implements Exception {
               'El proceso de inicio de sesión fue cancelado por el usuario.',
             );
           default:
-            return const LogInWithGoogleFailure();
+            return const LogInWithGoogleFailure('Error desconocido.');
         }
     }
   }
