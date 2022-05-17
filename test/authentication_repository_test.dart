@@ -76,7 +76,7 @@ void main() {
 
   const email = 'test@gmail.com';
   const password = 't0ps3cret42';
-  const user = User(
+  const user = AuthUser(
     id: _mockFirebaseUserUid,
     email: _mockFirebaseUserEmail,
   );
@@ -296,7 +296,7 @@ void main() {
             .thenAnswer((_) => Stream.value(null));
         await expectLater(
           authenticationRepository.user,
-          emitsInOrder(const <User>[User.empty]),
+          emitsInOrder(const <AuthUser>[AuthUser.empty]),
         );
       });
 
@@ -309,7 +309,7 @@ void main() {
             .thenAnswer((_) => Stream.value(firebaseUser));
         await expectLater(
           authenticationRepository.user,
-          emitsInOrder(const <User>[user]),
+          emitsInOrder(const <AuthUser>[user]),
         );
         verify(
           () => cache.write(
@@ -323,11 +323,12 @@ void main() {
     group('currentUser', () {
       test('returns User.empty when cached user is null', () {
         when(
-          () => cache.read<User>(key: AuthenticationRepository.userCacheKey),
+          () =>
+              cache.read<AuthUser>(key: AuthenticationRepository.userCacheKey),
         ).thenReturn(null);
         expect(
           authenticationRepository.currentUser,
-          equals(User.empty),
+          equals(AuthUser.empty),
         );
       });
 
@@ -335,7 +336,8 @@ void main() {
 
       test('returns User when cached user is not null', () async {
         when(
-          () => cache.read<User>(key: AuthenticationRepository.userCacheKey),
+          () =>
+              cache.read<AuthUser>(key: AuthenticationRepository.userCacheKey),
         ).thenReturn(user);
         expect(
           authenticationRepository.currentUser,

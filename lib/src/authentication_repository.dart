@@ -74,7 +74,8 @@ class SignUpWithEmailAndPasswordFailure implements Exception {
               'Por favor, ingrese una contraseña más fuerte.',
             );
           default:
-            return const SignUpWithEmailAndPasswordFailure();
+            return const SignUpWithEmailAndPasswordFailure(
+                'Error desconocido.');
         }
     }
   }
@@ -266,6 +267,34 @@ class LogInWithGoogleFailure implements Exception {
   final String message;
 }
 
+/// Thrown during the user delete process if a failure occurs.
+class DeleteUserFailure implements Exception {
+  const DeleteUserFailure([this.message = 'An unknown exception occurred.']);
+
+  final String message;
+
+  factory DeleteUserFailure.fromCode(String code, LanguageCode languageCode) {
+    switch (languageCode) {
+      case LanguageCode.en:
+        switch (code) {
+          case 'requires-recent-login':
+            return const DeleteUserFailure(
+                'This operation is sensitive and requires recent authentication. Log in again before retrying this request.');
+          default:
+            return const DeleteUserFailure();
+        }
+      case LanguageCode.es:
+        switch (code) {
+          case 'requires-recent-login':
+            return const DeleteUserFailure(
+                'Esta operación es sensible y requiere autenticación reciente. Inicie sesión de nuevo antes de volver a intentar esta solicitud.');
+          default:
+            return const DeleteUserFailure();
+        }
+    }
+  }
+}
+
 /// Thrown during the logout process if a failure occurs.
 class LogOutFailure implements Exception {}
 
@@ -300,13 +329,13 @@ class AuthenticationRepository {
   @visibleForTesting
   static const userCacheKey = '__user_cache_key__';
 
-  /// Stream of [User] which will emit the current user when
+  /// Stream of [AuthUser] which will emit the current user when
   /// the authentication state changes.
   ///
-  /// Emits [User.empty] if the user is not authenticated.
-  Stream<User> get user {
+  /// Emits [AuthUser.empty] if the user is not authenticated.
+  Stream<AuthUser> get user {
     return _firebaseAuth.authStateChanges().map((firebaseUser) {
-      final user = firebaseUser == null ? User.empty : firebaseUser.toUser;
+      final user = firebaseUser == null ? AuthUser.empty : firebaseUser.toUser;
       _cache.write(key: userCacheKey, value: user);
       return user;
     });
@@ -318,9 +347,9 @@ class AuthenticationRepository {
   }
 
   /// Returns the current cached user.
-  /// Defaults to [User.empty] if there is no cached user.
-  User get currentUser {
-    return _cache.read<User>(key: userCacheKey) ?? User.empty;
+  /// Defaults to [AuthUser.empty] if there is no cached user.
+  AuthUser get currentUser {
+    return _cache.read<AuthUser>(key: userCacheKey) ?? AuthUser.empty;
   }
 
   /// Creates a new user with the provided [email] and [password].
@@ -390,7 +419,7 @@ class AuthenticationRepository {
   }
 
   /// Signs out the current user which will emit
-  /// [User.empty] from the [user] Stream.
+  /// [AuthUser.empty] from the [user] Stream.
   ///
   /// Throws a [LogOutFailure] if an exception occurs.
   Future<void> logOut() async {
@@ -403,10 +432,20 @@ class AuthenticationRepository {
       throw LogOutFailure();
     }
   }
+
+  Future<void> deleteUser() async {
+    try {
+      await _firebaseAuth.currentUser!.delete();
+    } on FirebaseAuthException catch (e) {
+      throw DeleteUserFailure.fromCode(e.code, _languageCode);
+    } catch (_) {
+      throw const DeleteUserFailure();
+    }
+  }
 }
 
 extension on firebase_auth.User {
-  User get toUser {
-    return User(id: uid, email: email, name: displayName, photo: photoURL);
+  AuthUser get toUser {
+    return AuthUser(id: uid, email: email, name: displayName, photo: photoURL);
   }
 }

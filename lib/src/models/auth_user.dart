@@ -4,14 +4,14 @@ import 'package:json_annotation/json_annotation.dart';
 /// {@template user}
 /// User model
 ///
-/// [User.empty] represents an unauthenticated user.
+/// [AuthUser.empty] represents an unauthenticated user.
 /// {@endtemplate}
 ///
 
 @JsonSerializable()
-class User extends Equatable {
+class AuthUser extends Equatable {
   /// {@macro user}
-  const User({
+  const AuthUser({
     required this.id,
     this.email,
     this.name,
@@ -24,13 +24,13 @@ class User extends Equatable {
   final String? photo;
 
   /// Empty user which represents an unauthenticated user.
-  static const empty = User(id: '');
+  static const empty = AuthUser(id: '');
 
   /// Convenience getter to determine whether the current user is empty.
-  bool get isEmpty => this == User.empty;
+  bool get isEmpty => this == AuthUser.empty;
 
   /// Convenience getter to determine whether the current user is not empty.
-  bool get isNotEmpty => this != User.empty;
+  bool get isNotEmpty => this != AuthUser.empty;
 
   @override
   List<Object?> get props => [
