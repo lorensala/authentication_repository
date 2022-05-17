@@ -5,6 +5,7 @@ import 'package:cache/cache.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
@@ -156,6 +157,27 @@ class LogInWithGoogleFailure implements Exception {
     this.message = 'An unknown exception occurred.',
   ]);
 
+  factory LogInWithGoogleFailure.fromPlatformCode(
+      String code, LanguageCode languageCode) {
+    switch (languageCode) {
+      case LanguageCode.en:
+        switch (code) {
+          case 'sign_in_canceled':
+            return const LogInWithGoogleFailure('Sign in canceled.');
+          default:
+            return const LogInWithGoogleFailure();
+        }
+
+      case LanguageCode.es:
+        switch (code) {
+          case 'sign_in_canceled':
+            return const LogInWithGoogleFailure('Inicio de sesión cancelado.');
+          default:
+            return const LogInWithGoogleFailure();
+        }
+    }
+  }
+
   /// Create an authentication message
   /// from a firebase authentication exception code.
   factory LogInWithGoogleFailure.fromCode(
@@ -195,10 +217,6 @@ class LogInWithGoogleFailure implements Exception {
             return const LogInWithGoogleFailure(
               'The credential verification ID received is invalid.',
             );
-          case 'sign_in_canceled':
-            return const LogInWithGoogleFailure(
-              'The sign in process was canceled by the user.',
-            );
           default:
             return const LogInWithGoogleFailure();
         }
@@ -237,10 +255,7 @@ class LogInWithGoogleFailure implements Exception {
             return const LogInWithGoogleFailure(
               'El ID de verificación de credenciales recibido es inválido.',
             );
-          case 'sign_in_canceled':
-            return const LogInWithGoogleFailure(
-              'El proceso de inicio de sesión fue cancelado por el usuario.',
-            );
+
           default:
             return const LogInWithGoogleFailure('Error desconocido.');
         }
@@ -346,6 +361,8 @@ class AuthenticationRepository {
       }
 
       await _firebaseAuth.signInWithCredential(credential);
+    } on PlatformException catch (e) {
+      throw LogInWithGoogleFailure.fromPlatformCode(e.code, _languageCode);
     } on FirebaseAuthException catch (e) {
       throw LogInWithGoogleFailure.fromCode(e.code, _languageCode);
     } catch (_) {
