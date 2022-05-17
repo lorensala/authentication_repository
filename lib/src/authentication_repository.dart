@@ -158,42 +158,92 @@ class LogInWithGoogleFailure implements Exception {
 
   /// Create an authentication message
   /// from a firebase authentication exception code.
-  factory LogInWithGoogleFailure.fromCode(String code) {
-    switch (code) {
-      case 'account-exists-with-different-credential':
-        return const LogInWithGoogleFailure(
-          'Account exists with different credentials.',
-        );
-      case 'invalid-credential':
-        return const LogInWithGoogleFailure(
-          'The credential received is malformed or has expired.',
-        );
-      case 'operation-not-allowed':
-        return const LogInWithGoogleFailure(
-          'Operation is not allowed.  Please contact support.',
-        );
-      case 'user-disabled':
-        return const LogInWithGoogleFailure(
-          'This user has been disabled. Please contact support for help.',
-        );
-      case 'user-not-found':
-        return const LogInWithGoogleFailure(
-          'Email is not found, please create an account.',
-        );
-      case 'wrong-password':
-        return const LogInWithGoogleFailure(
-          'Incorrect password, please try again.',
-        );
-      case 'invalid-verification-code':
-        return const LogInWithGoogleFailure(
-          'The credential verification code received is invalid.',
-        );
-      case 'invalid-verification-id':
-        return const LogInWithGoogleFailure(
-          'The credential verification ID received is invalid.',
-        );
-      default:
-        return const LogInWithGoogleFailure();
+  factory LogInWithGoogleFailure.fromCode(
+      String code, LanguageCode languageCode) {
+    switch (languageCode) {
+      case LanguageCode.en:
+        switch (code) {
+          case 'account-exists-with-different-credential':
+            return const LogInWithGoogleFailure(
+              'Account exists with different credentials.',
+            );
+          case 'invalid-credential':
+            return const LogInWithGoogleFailure(
+              'The credential received is malformed or has expired.',
+            );
+          case 'operation-not-allowed':
+            return const LogInWithGoogleFailure(
+              'Operation is not allowed.  Please contact support.',
+            );
+          case 'user-disabled':
+            return const LogInWithGoogleFailure(
+              'This user has been disabled. Please contact support for help.',
+            );
+          case 'user-not-found':
+            return const LogInWithGoogleFailure(
+              'Email is not found, please create an account.',
+            );
+          case 'wrong-password':
+            return const LogInWithGoogleFailure(
+              'Incorrect password, please try again.',
+            );
+          case 'invalid-verification-code':
+            return const LogInWithGoogleFailure(
+              'The credential verification code received is invalid.',
+            );
+          case 'invalid-verification-id':
+            return const LogInWithGoogleFailure(
+              'The credential verification ID received is invalid.',
+            );
+          case 'sign_in_canceled':
+            return const LogInWithGoogleFailure(
+              'The sign in process was canceled by the user.',
+            );
+          default:
+            return const LogInWithGoogleFailure();
+        }
+
+      case LanguageCode.es:
+        switch (code) {
+          case 'account-exists-with-different-credential':
+            return const LogInWithGoogleFailure(
+              'La cuenta existe con credenciales diferentes.',
+            );
+          case 'invalid-credential':
+            return const LogInWithGoogleFailure(
+              'La credencial recibida es malformada o ha expirado.',
+            );
+          case 'operation-not-allowed':
+            return const LogInWithGoogleFailure(
+              'Operación no permitida. Por favor, contáctese con soporte.',
+            );
+          case 'user-disabled':
+            return const LogInWithGoogleFailure(
+              'El usuario ha sido deshabilitado. Contáctese con soporte para ayuda.',
+            );
+          case 'user-not-found':
+            return const LogInWithGoogleFailure(
+              'El email no esta registrado. Por favor, creese una cuenta.',
+            );
+          case 'wrong-password':
+            return const LogInWithGoogleFailure(
+              'El email o la contraseña son incorrectos. Por favor, intente nuevamente.',
+            );
+          case 'invalid-verification-code':
+            return const LogInWithGoogleFailure(
+              'El código de verificación de credenciales recibido es inválido.',
+            );
+          case 'invalid-verification-id':
+            return const LogInWithGoogleFailure(
+              'El ID de verificación de credenciales recibido es inválido.',
+            );
+          case 'sign_in_canceled':
+            return const LogInWithGoogleFailure(
+              'El proceso de inicio de sesión fue cancelado por el usuario.',
+            );
+          default:
+            return const LogInWithGoogleFailure();
+        }
     }
   }
 
@@ -297,7 +347,7 @@ class AuthenticationRepository {
 
       await _firebaseAuth.signInWithCredential(credential);
     } on FirebaseAuthException catch (e) {
-      throw LogInWithGoogleFailure.fromCode(e.code);
+      throw LogInWithGoogleFailure.fromCode(e.code, _languageCode);
     } catch (_) {
       throw const LogInWithGoogleFailure();
     }
