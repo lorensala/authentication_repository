@@ -158,27 +158,6 @@ class LogInWithGoogleFailure implements Exception {
     this.message = 'An unknown exception occurred.',
   ]);
 
-  factory LogInWithGoogleFailure.fromPlatformCode(
-      String code, LanguageCode languageCode) {
-    switch (languageCode) {
-      case LanguageCode.en:
-        switch (code) {
-          case 'sign_in_canceled':
-            return const LogInWithGoogleFailure('Sign in canceled.');
-          default:
-            return const LogInWithGoogleFailure();
-        }
-
-      case LanguageCode.es:
-        switch (code) {
-          case 'sign_in_canceled':
-            return const LogInWithGoogleFailure('Inicio de sesión cancelado.');
-          default:
-            return const LogInWithGoogleFailure();
-        }
-    }
-  }
-
   /// Create an authentication message
   /// from a firebase authentication exception code.
   factory LogInWithGoogleFailure.fromCode(
@@ -382,7 +361,10 @@ class AuthenticationRepository {
         credential = userCredential.credential!;
       } else {
         final googleUser = await _googleSignIn.signIn();
-        final googleAuth = await googleUser!.authentication;
+        if (googleUser == null) {
+          return;
+        }
+        final googleAuth = await googleUser.authentication;
         credential = firebase_auth.GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
@@ -390,8 +372,6 @@ class AuthenticationRepository {
       }
 
       await _firebaseAuth.signInWithCredential(credential);
-    } on PlatformException catch (e) {
-      throw LogInWithGoogleFailure.fromPlatformCode(e.code, _languageCode);
     } on FirebaseAuthException catch (e) {
       throw LogInWithGoogleFailure.fromCode(e.code, _languageCode);
     } catch (_) {
